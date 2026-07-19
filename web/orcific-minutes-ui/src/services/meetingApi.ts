@@ -3,14 +3,16 @@ import type { MeetingNotes } from '../models/MeetingNotes.ts';
 import type { RagResponse } from '../models/RagResponse.ts';
 import type { RagQuestionRequest } from '../models/RagQuestionRequest.ts';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/api';
+
+export const apiUrl = (path: string) => `${API_BASE_URL}${path}`;
 
 export async function uploadTranscript(file: File, model: string): Promise<MeetingNotes> {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('model', model);
 
-    const response = await fetch(`${API_BASE_URL}/meeting/upload`, {
+    const response = await fetch(apiUrl('/meeting/upload'), {
         method: 'POST',
         body: formData,
     });
@@ -27,7 +29,7 @@ export async function saveMeeting(
     transcript: string,
     meetingNotes: MeetingNotes,
 ): Promise<number> {
-    const response = await fetch(`${API_BASE_URL}/meeting`, {
+    const response = await fetch(apiUrl('/meeting'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -49,7 +51,7 @@ export async function saveMeeting(
 }
 
 export async function getMeetingHistory(): Promise<MeetingHistory[]> {
-    const response = await fetch(`${API_BASE_URL}/meeting`);
+    const response = await fetch(apiUrl('/meeting'));
 
     if (!response.ok) {
         throw new Error('Failed to load history.');
@@ -59,7 +61,7 @@ export async function getMeetingHistory(): Promise<MeetingHistory[]> {
 }
 
 export async function getMeeting(id: number): Promise<MeetingNotes> {
-    const response = await fetch(`${API_BASE_URL}/meeting/${id}`);
+    const response = await fetch(apiUrl(`/meeting/${id}`));
 
     if (!response.ok) {
         throw new Error('Meeting not found.');
@@ -73,7 +75,7 @@ export async function askMeetingRag(
     question: string,
     model: string,
 ): Promise<RagResponse> {
-    const response = await fetch(`${API_BASE_URL}/rag/ask`, {
+    const response = await fetch(apiUrl('/rag/ask'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

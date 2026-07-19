@@ -10,7 +10,7 @@ import NotificationToast from './components/NotificationToast';
 import type { MeetingNotes } from './models/MeetingNotes';
 import type { MeetingHistory } from './models/MeetingHistory';
 import { useEffect, useState } from 'react';
-import { getMeeting, getMeetingHistory } from './services/meetingApi';
+import { apiUrl, getMeeting, getMeetingHistory } from './services/meetingApi';
 import type { Notification, NotificationType } from './types/notifications';
 
 function App() {
@@ -60,7 +60,7 @@ function App() {
             return;
         }
 
-        const response = await fetch(`http://localhost:8080/api/meeting/${id}/pdf`);
+        const response = await fetch(apiUrl(`/meeting/${id}/pdf`));
 
         if (!response.ok) {
             showNotification(

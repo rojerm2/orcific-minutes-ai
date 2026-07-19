@@ -1,0 +1,47 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    volumes:
+      - ollama-data:/root/.ollama
+    ports:
+      - "11434:11434"
+
+  ollama-init:
+    image: ollama/ollama:latest
+    depends_on:
+      - ollama
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+      OLLAMA_CHAT_MODEL: ${OLLAMA_CHAT_MODEL:-qwen2.5:3b}
+      OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}
+    command: >
+      sh -c 'until ollama list >/dev/null 2>&1; do sleep 2; done;
+      ollama pull "$${OLLAMA_CHAT_MODEL}" && ollama pull "$${OLLAMA_EMBEDDING_MODEL}"'
+
+  backend:
+    build:
+      context: ./core
+    depends_on:
+      ollama-init:
+        condition: service_completed_successfully
+    environment:
+      OLLAMA_BASE_URL: http://ollama:11434
+      OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}
+      SPRING_DATASOURCE_URL: jdbc:sqlite:/app/data/meeting-notes.db
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173}
+    volumes:
+      - meeting-data:/app/data
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ./web/orcific-minutes-ui
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"
+
+volumes:
+  ollama-data:
+  meeting-data:
