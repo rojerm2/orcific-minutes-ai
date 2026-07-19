@@ -76,9 +76,9 @@
 - Phi-3 Mini
 
 ---
-
-## Run it with Docker (recommended)
-
+<!--
+## Run it with Docker (still fixing)
+-->
 ### Prerequisites
 
 ```bash
@@ -86,10 +86,11 @@ git clone https://github.com/rojerm2/orcific-minutes-ai
 cd orcific-minutes
 docker compose up --build
 ```
-
+<!--
 Open [http://localhost:5173](http://localhost:5173). The first start downloads the chat and embedding models, so it can take several minutes. Later starts reuse the Docker volumes.
+-->
 
-## Run it without Docker
+## Run it without Docker (recommended)
 
 Requirements: Java 21, Node.js 22 or newer, and [Ollama](https://ollama.com/).
 
@@ -113,11 +114,14 @@ On Windows PowerShell, use `./mvnw.cmd spring-boot:run` and `npm.cmd` if PowerSh
 
 ## Configuration
 
+<!--
 The frontend uses `/api` by default. During local Vite development, that path is proxied to `http://localhost:8080`; in Docker, Nginx proxies it to the backend container. This means no code edit is needed between those two modes.
+
 
 For a separately hosted frontend, set `VITE_API_BASE_URL` **at build time** to your backend URL ending in `/api`, for example `https://api.example.com/api`. Set `CORS_ALLOWED_ORIGINS` on the backend to the browser origin, for example `https://demo.example.com`.
 
 Copy `.env.example` to `.env` only if you want to change the default Ollama model names or CORS settings. Never commit `.env`.
+-->
 
 | Variable                 | Default                               | Purpose                                                     |
 | ------------------------ | ------------------------------------- | ----------------------------------------------------------- |
@@ -129,14 +133,115 @@ Copy `.env.example` to `.env` only if you want to change the default Ollama mode
 
 ## Architecture
 
+Backend Architecture
 ```text
-React + Vite  -->  Nginx / Vite proxy  -->  Spring Boot API  -->  Ollama
-                                      |                 |
-                                      |                 --> SQLite
-                                      --> browser UI
+.
+└── backend/
+    ├── java/
+    │   ├── controller/
+    │   │   ├── MeetingController
+    │   │   └── RagController
+    │   ├── config/
+    │   │   ├── CorsConfig
+    │   │   └── RestClientConfig
+    │   ├── dto/
+    │   │   ├── ai/
+    │   │   │   ├── EmbeddingRequest
+    │   │   │   ├── EmbeddingResponse
+    │   │   │   ├── OllamaOptions
+    │   │   │   ├── OllamaRequest
+    │   │   │   ├── OllamaResponse
+    │   │   │   ├── RagAnswerResponse
+    │   │   │   ├── RagQuestionRequest
+    │   │   │   └── SearchResult
+    │   │   ├── AiResponse
+    │   │   ├── ApiError
+    │   │   ├── GenerationMetadata
+    │   │   ├── MeetingHistoryResponse
+    │   │   ├── MeetingNotes
+    │   │   ├── MeetingRequest
+    │   │   ├── SaveMeetingRequest
+    │   │   └── SaveMeetingResponse
+    │   ├── entity/
+    │   │   ├── MeetingChunkEntity
+    │   │   └── MeetingEntity
+    │   ├── exception/
+    │   │   ├── GlobalExceptionHandler
+    │   │   ├── InvalidAiResponseException
+    │   │   ├── MeetingProcessingException
+    │   │   └── OllamaCommunicationException
+    │   ├── mapper/
+    │   │   └── MeetingMapper
+    │   ├── repository/
+    │   │   ├── MeetingChunkRepository
+    │   │   └── MeetingRepository
+    │   ├── service/
+    │   │   ├── ai/
+    │   │   │   ├── ChunkingService
+    │   │   │   ├── EmbeddingService
+    │   │   │   ├── OllamaService
+    │   │   │   ├── PromptService
+    │   │   │   ├── RagService
+    │   │   │   ├── RetrievalService
+    │   │   │   └── SimilarityService
+    │   │   ├── MeetingService
+    │   │   └── PdfService
+    │   └── Application.java
+    └── resources/
+        ├── prompts/
+        │   ├── meeting-notes.prompt
+        │   └── rag-prompt.prompt
+        └── test-data/
+            └── meeting-1.txt
 ```
 
-## Deployment note
+Frontend Architecture
+```text
+.
+└── frontend/
+    ├── components/
+    │   ├── EmptyState.tsx
+    │   ├── ExportButtons.tsx
+    │   ├── Header.tsx
+    │   ├── HistorySidebar.tsx
+    │   ├── LoadingSpinner.tsx
+    │   ├── MeetingNotesCard.tsx
+    │   ├── NotificationToast.tsx
+    │   ├── RagAssistantPanel.tsx
+    │   └── UploadForm.tsx
+    ├── models/
+    │   ├── MeetingHistory.ts
+    │   ├── MeetingNotes.ts
+    │   ├── RagResponse.ts
+    │   └── RagSource.ts
+    ├── services/
+    │   └── meetingApi.ts
+    ├── types/
+    │   └── notification.ts
+    ├── utils/
+    │   └── meetingFormatter.ts
+    ├── App.tsx
+    ├── index.css
+    ├── main.tsx
+    └── index.html
+```
+
+---
+
+## Future Improvements
+
+- Hybrid Search (Keyword + Vector)
+- pgvector
+- ChromaDB
+- Authentication
+- Docker Compose
+- Multi-user workspaces
+- Cloud deployment
+- Streaming
+- Audio and Video upload
+- Focus the RAG in one meeting/transcription only
+
+---
 
 ## License
 
