@@ -63,6 +63,9 @@ build/
 ### VS Code ###
 .vscode/
 
+<<<<<<< HEAD
 
 __pycache__/
 *.py[cod]
+=======
+>>>>>>> 514b190b1ea5b1bc56ced995ef4b8e0f82a82d63
