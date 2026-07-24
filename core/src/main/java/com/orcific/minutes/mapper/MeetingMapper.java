@@ -66,6 +66,7 @@ public class MeetingMapper {
     public MeetingNotes toMeetingNotes(MeetingEntity entity) {
         try {
             return new MeetingNotes(
+                    "",
                     entity.getSummary(),
                     objectMapper.readValue(
                             entity.getDecisions(),

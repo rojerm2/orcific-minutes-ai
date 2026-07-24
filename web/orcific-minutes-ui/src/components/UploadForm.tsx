@@ -108,9 +108,10 @@ export default function UploadForm({
         try {
             setError('');
             onLoadingChange(true);
-            const generatedNotes = await uploadTranscript(selectedFile, model);
+            const generatedNotes: MeetingNotes = await uploadTranscript(selectedFile, model);
             setNotes(generatedNotes);
             onSuccess(generatedNotes);
+            setTranscript(generatedNotes.transcript);
             onNotify('success', 'Notes generated', 'Your meeting notes are ready to review.');
         } catch {
             setError('Unable to generate meeting notes. Please try again.');

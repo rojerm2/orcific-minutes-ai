@@ -44,7 +44,7 @@ public class MeetingService {
 
         String aiResponse = generateResponse(prompt, model);
         LOGGER.info("AI response before parsing: " + aiResponse);
-        return parseResponseToMeetingNotes(aiResponse);
+        return parseResponseToMeetingNotes(transcript, aiResponse);
     }
 
     public long saveMeeting(SaveMeetingRequest request) {
@@ -86,13 +86,14 @@ public class MeetingService {
         return meetingMapper.toMeetingNotes(entity);
     }
 
-    private MeetingNotes parseResponseToMeetingNotes(String aiResponse) {
+    private MeetingNotes parseResponseToMeetingNotes(String transcript, String aiResponse) {
         LOGGER.info("Parsing AI response into MeetingNotes.");
         try{
             AiResponse aiResponseDto = objectMapper.readValue(aiResponse, AiResponse.class);
 
             LOGGER.info("AI response successfully parsed into MeetingNotes.");
             return new MeetingNotes(
+                    transcript,
                     aiResponseDto.summary(),
                     aiResponseDto.decisions(),
                     aiResponseDto.actionItems(),

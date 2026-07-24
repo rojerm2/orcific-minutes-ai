@@ -1,4 +1,5 @@
 export interface MeetingNotes {
+    transcript: string;
     summary: string;
     decisions: string[];
     actionItems: string[];
