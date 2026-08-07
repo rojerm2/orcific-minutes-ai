@@ -8,6 +8,15 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
 ![Ollama](https://img.shields.io/badge/Ollama-Local_AI-black)
 
+## Demo
+
+### Text Transcript → AI Meeting Notes
+
+[YouTube | Orcific Minutes AI | Generating Video from Text Transcript](https://youtu.be/nLU075aW1Fw)
+
+[YouTube | Orcific Minutes AI | Generate Meeting Notes from Audio](https://youtu.be/pFogWezuitc)
+
+
 ## Overview
 
 - Generates a summary, decisions, action items, and open questions from a transcript.
@@ -31,6 +40,7 @@
 ### Meeting Management
 
 - Upload transcript
+- Upload meeting audio
 - Generate meeting notes
 - Save meetings
 - Meeting history
@@ -67,6 +77,8 @@
 - Spring Boot
 - Maven
 - SQLite
+- Python
+- Whisper
 
 ### AI
 
@@ -133,97 +145,19 @@ Copy `.env.example` to `.env` only if you want to change the default Ollama mode
 
 ## Architecture
 
-Backend Architecture
+Architecture
 ```text
-.
-└── backend/
-    ├── java/
-    │   ├── controller/
-    │   │   ├── MeetingController
-    │   │   └── RagController
-    │   ├── config/
-    │   │   ├── CorsConfig
-    │   │   └── RestClientConfig
-    │   ├── dto/
-    │   │   ├── ai/
-    │   │   │   ├── EmbeddingRequest
-    │   │   │   ├── EmbeddingResponse
-    │   │   │   ├── OllamaOptions
-    │   │   │   ├── OllamaRequest
-    │   │   │   ├── OllamaResponse
-    │   │   │   ├── RagAnswerResponse
-    │   │   │   ├── RagQuestionRequest
-    │   │   │   └── SearchResult
-    │   │   ├── AiResponse
-    │   │   ├── ApiError
-    │   │   ├── GenerationMetadata
-    │   │   ├── MeetingHistoryResponse
-    │   │   ├── MeetingNotes
-    │   │   ├── MeetingRequest
-    │   │   ├── SaveMeetingRequest
-    │   │   └── SaveMeetingResponse
-    │   ├── entity/
-    │   │   ├── MeetingChunkEntity
-    │   │   └── MeetingEntity
-    │   ├── exception/
-    │   │   ├── GlobalExceptionHandler
-    │   │   ├── InvalidAiResponseException
-    │   │   ├── MeetingProcessingException
-    │   │   └── OllamaCommunicationException
-    │   ├── mapper/
-    │   │   └── MeetingMapper
-    │   ├── repository/
-    │   │   ├── MeetingChunkRepository
-    │   │   └── MeetingRepository
-    │   ├── service/
-    │   │   ├── ai/
-    │   │   │   ├── ChunkingService
-    │   │   │   ├── EmbeddingService
-    │   │   │   ├── OllamaService
-    │   │   │   ├── PromptService
-    │   │   │   ├── RagService
-    │   │   │   ├── RetrievalService
-    │   │   │   └── SimilarityService
-    │   │   ├── MeetingService
-    │   │   └── PdfService
-    │   └── Application.java
-    └── resources/
-        ├── prompts/
-        │   ├── meeting-notes.prompt
-        │   └── rag-prompt.prompt
-        └── test-data/
-            └── meeting-1.txt
-```
-
-Frontend Architecture
-```text
-.
-└── frontend/
-    ├── components/
-    │   ├── EmptyState.tsx
-    │   ├── ExportButtons.tsx
-    │   ├── Header.tsx
-    │   ├── HistorySidebar.tsx
-    │   ├── LoadingSpinner.tsx
-    │   ├── MeetingNotesCard.tsx
-    │   ├── NotificationToast.tsx
-    │   ├── RagAssistantPanel.tsx
-    │   └── UploadForm.tsx
-    ├── models/
-    │   ├── MeetingHistory.ts
-    │   ├── MeetingNotes.ts
-    │   ├── RagResponse.ts
-    │   └── RagSource.ts
-    ├── services/
-    │   └── meetingApi.ts
-    ├── types/
-    │   └── notification.ts
-    ├── utils/
-    │   └── meetingFormatter.ts
-    ├── App.tsx
-    ├── index.css
-    ├── main.tsx
-    └── index.html
+                React UI
+                    │
+                    ▼
+             Spring Boot API
+                    │
+     ┌──────────────┼──────────────┐
+     ▼              ▼              ▼
+ MeetingService  OllamaService  RagService
+     │              │              │
+     ▼              ▼              ▼
+  SQLite        Ollama LLM    Embeddings
 ```
 
 ---
@@ -238,8 +172,7 @@ Frontend Architecture
 - Multi-user workspaces
 - Cloud deployment
 - Streaming
-- Audio and Video upload
-- Focus the RAG in one meeting/transcription only
+- Video upload
 
 ---
 
