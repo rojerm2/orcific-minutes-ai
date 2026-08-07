@@ -10,7 +10,8 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "target": "esnext",
-    "types": [],
+    "types": ["vite/client"],
+    "include": ["src"],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],

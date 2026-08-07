@@ -1,8 +1,8 @@
 package com.orcific.minutes.config;
 
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.sqlite.SQLiteDataSource;
 
 import javax.sql.DataSource;
@@ -18,8 +18,8 @@ public class SQLiteDataSourceConfig {
     private static final String MEMORY_FALLBACK_URL = "jdbc:sqlite:file:memdb?mode=memory&cache=shared";
 
     @Bean
-    public DataSource dataSource(DataSourceProperties properties) {
-        String url = properties.getUrl();
+    public DataSource dataSource(Environment environment) {
+        String url = environment.getProperty("spring.datasource.url");
         if (url == null || url.isBlank()) {
             throw new IllegalStateException("spring.datasource.url must be configured");
         }

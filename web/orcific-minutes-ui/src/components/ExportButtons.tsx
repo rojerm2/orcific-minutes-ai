@@ -18,6 +18,7 @@ export default function ExportButtons({
             await navigator.clipboard.writeText(formatMeetingNotes(meetingNotes));
             onNotify('success', 'Copied to clipboard', 'Meeting notes copied successfully.');
         } catch (error) {
+            console.log(error);
             onNotify('error', 'Copy failed', 'Unable to copy notes. Please try again.');
         }
     };
@@ -37,7 +38,7 @@ export default function ExportButtons({
     };
 
     return (
-        <div className="mt-3 flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-3 mt-3">
             <button
                 type="button"
                 className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
