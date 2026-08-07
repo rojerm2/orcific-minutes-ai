@@ -53,7 +53,6 @@ export default function UploadForm({
             };
 
             reader.readAsText(file);
-        } else if (isAudioFile) {
         }
     };
 
@@ -155,11 +154,10 @@ export default function UploadForm({
 
             <div className="mt-6 space-y-4">
                 {error && (
-                    <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">
+                    <div className="px-4 py-3 text-sm font-medium border rounded-2xl border-rose-200 bg-rose-50 text-rose-700">
                         {error}
                     </div>
                 )}
-
                 <div
                     onDragEnter={handleDragEnter}
                     onDragOver={(event) => event.preventDefault()}
@@ -195,7 +193,7 @@ export default function UploadForm({
                     />
 
                     {selectedFile && (
-                        <div className="mt-5 flex items-center justify-center gap-2 text-sm font-medium text-slate-600">
+                        <div className="flex items-center justify-center gap-2 mt-5 text-sm font-medium text-slate-600">
                             <span className="grid h-6 w-7 place-items-center rounded-md bg-indigo-100 text-[10px] font-bold text-indigo-700">
                                 TXT
                             </span>
@@ -204,11 +202,43 @@ export default function UploadForm({
                     )}
                 </div>
 
+                {/* input field */}
+                <div className="relative">
+                    <textarea
+                        onInput={(e: React.FormEvent<HTMLTextAreaElement>) => {
+                            const t = e.currentTarget;
+                            t.style.height = '';
+                            t.style.height = t.scrollHeight + 'px';
+                        }}
+                        placeholder="Upload a transcript file or paste the transcript text here"
+                        className="w-full px-3 py-4 overflow-y-auto border outline-none field-sizing-content focus:border-slate-400 focus:ring-1 focus:ring-slate-400 bg-slate-100 placeholder:text-slate-500 rounded-3xl border-slate-300 max-h-150 min-h-10"
+                    />
+
+                    <button
+                        type="button"
+                        className="absolute p-1 text-gray-400 transition-all duration-200 rounded-full  right-3 top-3 hover:text-gray-600 hover:bg-gray-100"
+                    >
+                        <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M6 18L18 6M6 6l12 12"
+                            />
+                        </svg>
+                    </button>
+                </div>
+
                 {!notes && (
-                    <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-slate-50/80 p-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex flex-col gap-3 p-4 border rounded-2xl border-slate-200 bg-slate-50/80 sm:flex-row sm:items-center sm:justify-between">
                         <div>
                             <p className="text-sm font-semibold text-slate-800">Generation model</p>
-                            <p className="mt-0.5 text-sm text-slate-500">
+                            <p className="mt-0.5 text-sm text-slate-500 border">
                                 Choose the local model for this summary.
                             </p>
                         </div>
@@ -223,7 +253,6 @@ export default function UploadForm({
                         </select>
                     </div>
                 )}
-
                 <button
                     onClick={handleGenerate}
                     disabled={loading || !selectedFile}
@@ -234,7 +263,7 @@ export default function UploadForm({
                 {notes && (
                     <button
                         onClick={handleSaveMeeting}
-                        className="w-full rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-100"
+                        className="w-full px-4 py-3 text-sm font-semibold transition border rounded-xl border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100"
                     >
                         Save meeting to history
                     </button>
