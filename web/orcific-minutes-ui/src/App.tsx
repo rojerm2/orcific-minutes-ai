@@ -21,15 +21,18 @@ function App() {
     const [id, setId] = useState<number>();
     const [notifications, setNotifications] = useState<Notification[]>([]);
 
-    useEffect(() => {
-        void loadHistory();
-    }, []);
-
-    const loadHistory = async () => {
-        const meetingHistory = await getMeetingHistory();
-        meetingHistory.reverse();
-        setHistory(meetingHistory);
+    const loadHistory = () => {
+        getMeetingHistory()
+            .then((meetingHistory) => {
+                meetingHistory.reverse();
+                setHistory(meetingHistory);
+            })
+            .catch((error) => {
+                console.error('Failed to load meeting history:', error);
+            });
     };
+
+    useEffect(loadHistory, []);
 
     const openMeeting = async (meetingId: number) => {
         const notes = await getMeeting(meetingId);
@@ -84,7 +87,7 @@ function App() {
     return (
         <div className="min-h-screen bg-[radial-gradient(circle_at_0%_0%,rgba(99,102,241,0.16),transparent_27%),radial-gradient(circle_at_100%_12%,rgba(20,184,166,0.11),transparent_23%),linear-gradient(145deg,#f8faff_0%,#f4f6fb_52%,#eef3fa_100%)]">
             <NotificationToast notifications={notifications} onDismiss={dismissNotification} />
-            <div className="mx-auto flex max-w-350 flex-col px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
+            <div className="flex flex-col px-4 py-5 mx-auto max-w-350 sm:px-6 lg:px-8 lg:py-8">
                 <Header />
 
                 <div className="mt-6 grid gap-6 xl:grid-cols-[260px_minmax(0,1fr)_360px] 2xl:grid-cols-[280px_minmax(0,1fr)_380px]">
@@ -94,7 +97,7 @@ function App() {
 
                     <main className="min-w-0 space-y-6">
                         {notes !== null && transcript == null && (
-                            <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700 shadow-sm">
+                            <div className="px-4 py-3 text-sm font-medium border shadow-sm rounded-2xl border-emerald-200 bg-emerald-50 text-emerald-700">
                                 Meeting notes generated successfully.
                             </div>
                         )}
