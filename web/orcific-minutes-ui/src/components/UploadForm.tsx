@@ -30,7 +30,13 @@ export default function UploadForm({
     const dragDepth = useRef(0);
 
     const selectFile = (file: File | null) => {
-        if (!file) return;
+        if (!file) {
+            setSelectedFile(null);
+            setNotes(null);
+            setError('');
+            setTranscript('');
+            return;
+        }
 
         const isTextFile = file.name.toLocaleLowerCase().endsWith('.txt');
         const isAudioFile = file.type.startsWith('audio/');
@@ -198,41 +204,71 @@ export default function UploadForm({
                                 TXT
                             </span>
                             {selectedFile.name}
+
+                            <button
+                                type="button"
+                                className="hover:cursor-pointer inline-flex h-8 w-8 items-center justify-center rounded-full bg-rose-100 text-rose-600 transition hover:bg-rose-200 hover:text-rose-700"
+                                onClick={() => selectFile(null)}
+                                aria-label="Remove selected file"
+                            >
+                                <svg
+                                    className="h-4 w-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                    />
+                                </svg>
+                            </button>
                         </div>
                     )}
                 </div>
 
                 {/* input field */}
-                <div className="relative">
-                    <textarea
-                        onInput={(e: React.FormEvent<HTMLTextAreaElement>) => {
-                            const t = e.currentTarget;
-                            t.style.height = '';
-                            t.style.height = t.scrollHeight + 'px';
-                        }}
-                        placeholder="Upload a transcript file or paste the transcript text here"
-                        className="w-full px-3 py-4 overflow-y-auto border outline-none field-sizing-content focus:border-slate-400 focus:ring-1 focus:ring-slate-400 bg-slate-100 placeholder:text-slate-500 rounded-3xl border-slate-300 max-h-150 min-h-10"
-                    />
+                {!selectedFile && (
+                    <div className="relative">
+                        <textarea
+                            onInput={(e: React.FormEvent<HTMLTextAreaElement>) => {
+                                const t = e.currentTarget;
+                                t.style.height = '';
+                                t.style.height = t.scrollHeight + 'px';
+                            }}
+                            onChange={(e) => {
+                                setTranscript(e.target.value);
+                                e.currentTarget.style.height = '';
+                            }}
+                            value={transcript}
+                            placeholder="Upload a transcript file or paste the transcript text here"
+                            className="w-full px-3 py-4 overflow-y-auto border outline-none field-sizing-content focus:border-slate-400 focus:ring-1 focus:ring-slate-400 bg-slate-100 placeholder:text-slate-500 rounded-3xl border-slate-300 max-h-150 min-h-10"
+                        />
 
-                    <button
-                        type="button"
-                        className="absolute p-1 text-gray-400 transition-all duration-200 rounded-full  right-3 top-3 hover:text-gray-600 hover:bg-gray-100"
-                    >
-                        <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            viewBox="0 0 24 24"
+                        <button
+                            type="button"
+                            onClick={() => setTranscript('')}
+                            className="p-1 absolute text-gray-400 transition-all duration-200 rounded-full  right-5 top-3 hover:text-gray-600 hover:bg-slate-300 cursor-pointer"
                         >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M6 18L18 6M6 6l12 12"
-                            />
-                        </svg>
-                    </button>
-                </div>
+                            <svg
+                                className="w-6 h-6"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
+                            </svg>
+                        </button>
+                    </div>
+                )}
 
                 {!notes && (
                     <div className="flex flex-col gap-3 p-4 border rounded-2xl border-slate-200 bg-slate-50/80 sm:flex-row sm:items-center sm:justify-between">
