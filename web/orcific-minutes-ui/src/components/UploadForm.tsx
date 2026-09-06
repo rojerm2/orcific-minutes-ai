@@ -28,6 +28,7 @@ export default function UploadForm({
     const [notes, setNotes] = useState<MeetingNotes | null>(null);
     const [isDragging, setIsDragging] = useState(false);
     const dragDepth = useRef(0);
+    const hasPastedTranscript = !selectedFile && transcript.trim().length > 0;
 
     const selectFile = (file: File | null) => {
         if (!file) {
@@ -102,18 +103,23 @@ export default function UploadForm({
     };
 
     const handleGenerate = async () => {
-        if (!selectedFile) {
+        if (!selectedFile && !transcript.trim()) {
             onNotify(
                 'info',
-                'No transcript selected',
-                'Please choose a transcript file before generating notes.',
+                'No script provided',
+                'Choose a transcript file or paste a script before generating notes.',
             );
             return;
         }
         try {
             setError('');
             onLoadingChange(true);
-            const generatedNotes: MeetingNotes = await uploadTranscript(selectedFile, model);
+            const inputFile =
+                selectedFile ??
+                new File([transcript], 'pasted-transcript.txt', {
+                    type: 'text/plain',
+                });
+            const generatedNotes: MeetingNotes = await uploadTranscript(inputFile, model);
             setNotes(generatedNotes);
             onSuccess(generatedNotes);
             setTranscript(generatedNotes.transcript);
@@ -143,7 +149,7 @@ export default function UploadForm({
     };
 
     return (
-        <section className="rounded-4xl border border-slate-200/80 bg-white p-6 shadow-[0_16px_45px_-30px_rgba(15,23,42,0.35)] sm:p-8">
+        <section className="surface p-5 sm:p-7">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                     <h2 className="text-xl font-semibold tracking-tight text-slate-900">
@@ -158,52 +164,57 @@ export default function UploadForm({
                 </div>
             </div>
 
-            <div className="mt-6 space-y-4">
+            <div className="mt-6 space-y-5">
                 {error && (
                     <div className="px-4 py-3 text-sm font-medium border rounded-2xl border-rose-200 bg-rose-50 text-rose-700">
                         {error}
                     </div>
                 )}
-                <div
-                    onDragEnter={handleDragEnter}
-                    onDragOver={(event) => event.preventDefault()}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                    className={`rounded-2xl border-2 border-dashed p-5 text-center transition sm:p-7 ${
-                        isDragging
-                            ? 'border-indigo-500 bg-indigo-50'
-                            : 'border-slate-200 bg-slate-50/70 hover:border-indigo-300 hover:bg-indigo-50/40'
-                    }`}
-                >
-                    <span className="block text-sm font-semibold text-slate-800">
-                        Transcript file
-                    </span>
-                    <p className="mt-2 text-sm text-slate-500">
-                        Drag and drop a <code>.txt</code> or <code>audio</code> file here, or choose
-                        one from your device.
-                    </p>
-
-                    <label
-                        htmlFor="transcript-file"
-                        className="mt-4 inline-flex cursor-pointer rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700"
+                {!hasPastedTranscript ? (
+                    <div
+                        onDragEnter={handleDragEnter}
+                        onDragOver={(event) => event.preventDefault()}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                        className={`rounded-2xl border-2 border-dashed p-5 text-center transition duration-200 sm:p-8 ${
+                            isDragging
+                                ? 'border-indigo-500 bg-indigo-50'
+                                : 'border-slate-200 bg-slate-50/70 hover:border-indigo-300 hover:bg-indigo-50/40'
+                        }`}
                     >
-                        Choose text file
-                    </label>
+                        <span className="block text-sm font-semibold text-slate-800">
+                            {selectedFile ? 'Transcript file selected' : 'Upload a transcript file'}
+                        </span>
+                        <p className="mt-2 text-sm text-slate-500">
+                            {selectedFile
+                                ? 'This file will be used to generate your meeting notes.'
+                                : 'Drag and drop a .txt or audio file here, or choose one from your device.'}
+                        </p>
 
-                    <input
-                        id="transcript-file"
-                        type="file"
-                        accept=".txt,audio/*"
-                        onChange={handleFileChange}
-                        className="sr-only"
-                    />
+                        {!selectedFile && (
+                            <>
+                                <label
+                                    htmlFor="transcript-file"
+                                    className="mt-4 inline-flex cursor-pointer rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-indigo-700 hover:shadow-md"
+                                >
+                                    Choose a file
+                                </label>
+                                <input
+                                    id="transcript-file"
+                                    type="file"
+                                    accept=".txt,audio/*"
+                                    onChange={handleFileChange}
+                                    className="sr-only"
+                                />
+                            </>
+                        )}
 
-                    {selectedFile && (
-                        <div className="flex items-center justify-center gap-2 mt-5 text-sm font-medium text-slate-600">
+                        {selectedFile && (
+                            <div className="mt-5 flex items-center justify-center gap-2 text-sm font-medium text-slate-600">
                             <span className="grid h-6 w-7 place-items-center rounded-md bg-indigo-100 text-[10px] font-bold text-indigo-700">
-                                TXT
+                                {selectedFile.type.startsWith('audio/') ? 'AUD' : 'TXT'}
                             </span>
-                            {selectedFile.name}
+                            <span className="max-w-[min(100%,18rem)] truncate">{selectedFile.name}</span>
 
                             <button
                                 type="button"
@@ -227,51 +238,71 @@ export default function UploadForm({
                                 </svg>
                             </button>
                         </div>
-                    )}
-                </div>
+                        )}
+                    </div>
+                ) : null}
 
-                {/* input field */}
                 {!selectedFile && (
                     <div className="relative">
-                        <textarea
-                            onInput={(e: React.FormEvent<HTMLTextAreaElement>) => {
-                                const t = e.currentTarget;
-                                t.style.height = '';
-                                t.style.height = t.scrollHeight + 'px';
-                            }}
-                            onChange={(e) => {
-                                setTranscript(e.target.value);
-                                e.currentTarget.style.height = '';
-                            }}
-                            value={transcript}
-                            placeholder="Upload a transcript file or paste the transcript text here"
-                            className="w-full px-3 py-4 overflow-y-auto border outline-none field-sizing-content focus:border-slate-400 focus:ring-1 focus:ring-slate-400 bg-slate-100 placeholder:text-slate-500 rounded-3xl border-slate-300 max-h-150 min-h-10"
-                        />
+                        <div className="mb-2 flex items-center justify-between gap-3">
+                            <div>
+                                <p className="text-sm font-semibold text-slate-800">Paste a script</p>
+                                <p className="mt-0.5 text-xs text-slate-500">
+                                    File upload is hidden while pasted text is active.
+                                </p>
+                            </div>
+                            {hasPastedTranscript && (
+                                <button
+                                    type="button"
+                                    onClick={() => setTranscript('')}
+                                    className="shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-50"
+                                >
+                                    Switch to file
+                                </button>
+                            )}
+                        </div>
+                        <div className="relative">
+                            <textarea
+                                onInput={(e: React.FormEvent<HTMLTextAreaElement>) => {
+                                    const t = e.currentTarget;
+                                    t.style.height = '';
+                                    t.style.height = t.scrollHeight + 'px';
+                                }}
+                                onChange={(e) => {
+                                    setTranscript(e.target.value);
+                                    e.currentTarget.style.height = '';
+                                }}
+                                value={transcript}
+                                placeholder="Paste the meeting script here"
+                                className="control min-h-32 w-full resize-y overflow-y-auto bg-slate-50 px-4 py-4 pr-12 text-sm leading-6 text-slate-800 placeholder:text-slate-400 max-h-150"
+                            />
 
-                        <button
-                            type="button"
-                            onClick={() => setTranscript('')}
-                            className="p-1 absolute text-gray-400 transition-all duration-200 rounded-full  right-5 top-3 hover:text-gray-600 hover:bg-slate-300 cursor-pointer"
-                        >
-                            <svg
-                                className="w-6 h-6"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                viewBox="0 0 24 24"
+                            <button
+                                type="button"
+                                onClick={() => setTranscript('')}
+                                className="absolute right-3 top-3 rounded-full p-1 text-gray-400 transition-all duration-200 hover:bg-slate-200 hover:text-gray-600"
+                                aria-label="Clear pasted script"
                             >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M6 18L18 6M6 6l12 12"
-                                />
-                            </svg>
-                        </button>
+                                <svg
+                                    className="h-5 w-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M6 18L18 6M6 6l12 12"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 )}
 
                 {!notes && (
-                    <div className="flex flex-col gap-3 p-4 border rounded-2xl border-slate-200 bg-slate-50/80 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-slate-50/80 p-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
                             <p className="text-sm font-semibold text-slate-800">Generation model</p>
                             <p className="mt-0.5 text-sm text-slate-500 border">
@@ -279,7 +310,7 @@ export default function UploadForm({
                             </p>
                         </div>
                         <select
-                            className="rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-indigo-400"
+                            className="control px-3 py-2.5 text-sm text-slate-700"
                             value={model}
                             onChange={(e) => setModel(e.target.value)}
                         >
@@ -291,15 +322,15 @@ export default function UploadForm({
                 )}
                 <button
                     onClick={handleGenerate}
-                    disabled={loading || !selectedFile}
-                    className={`w-full rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-700 hover:shadow-indigo-300 disabled:cursor-not-allowed disabled:bg-slate-400 disabled:shadow-none ${loading ? 'animate-pulse' : ''}`}
+                    disabled={loading || (!selectedFile && !transcript.trim())}
+                    className={`primary-button w-full px-4 py-3 text-sm font-semibold text-white disabled:bg-slate-400 disabled:shadow-none ${loading ? 'animate-pulse' : ''}`}
                 >
                     {loading ? 'Generating notes…' : 'Generate notes'}
                 </button>
                 {notes && (
                     <button
                         onClick={handleSaveMeeting}
-                        className="w-full px-4 py-3 text-sm font-semibold transition border rounded-xl border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100"
+                        className="w-full rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800 transition duration-200 hover:-translate-y-0.5 hover:bg-emerald-100"
                     >
                         Save meeting to history
                     </button>

@@ -87,8 +87,8 @@ export default function RagAssistantPanel({
     };
 
     const panelClassName = compact
-        ? 'w-full overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white p-5 shadow-[0_16px_45px_-30px_rgba(15,23,42,0.35)]'
-        : 'w-full overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white p-6 shadow-[0_16px_45px_-30px_rgba(15,23,42,0.35)]';
+        ? 'surface w-full overflow-hidden p-5'
+        : 'surface w-full overflow-hidden p-6';
 
     return (
         <section className={panelClassName}>
@@ -171,7 +171,7 @@ export default function RagAssistantPanel({
                         onChange={(event) => setQuestion(event.target.value)}
                         placeholder="Ask about your saved meetings"
                         disabled={!isEnabled}
-                        className="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-slate-400 disabled:cursor-not-allowed disabled:bg-slate-100"
+                        className="control w-full px-3 py-2.5 text-sm text-slate-900 disabled:bg-slate-100"
                     />
 
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -179,7 +179,7 @@ export default function RagAssistantPanel({
                             value={model}
                             onChange={(event) => setModel(event.target.value)}
                             disabled={!isEnabled}
-                            className="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-slate-400 disabled:cursor-not-allowed disabled:bg-slate-100 sm:w-40"
+                            className="control w-full px-3 py-2.5 text-sm text-slate-700 disabled:bg-slate-100 sm:w-40"
                         >
                             {modelOptions.map((option) => (
                                 <option key={option.value} value={option.value}>
@@ -191,7 +191,7 @@ export default function RagAssistantPanel({
                         <button
                             type="submit"
                             disabled={isLoading || !isEnabled}
-                            className="rounded-2xl bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-400"
+                            className="rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-slate-700 disabled:bg-slate-400"
                         >
                             {isLoading ? 'Sending…' : 'Ask'}
                         </button>

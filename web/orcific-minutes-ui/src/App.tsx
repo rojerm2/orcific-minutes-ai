@@ -87,15 +87,15 @@ function App() {
     return (
         <div className="min-h-screen bg-[radial-gradient(circle_at_0%_0%,rgba(99,102,241,0.16),transparent_27%),radial-gradient(circle_at_100%_12%,rgba(20,184,166,0.11),transparent_23%),linear-gradient(145deg,#f8faff_0%,#f4f6fb_52%,#eef3fa_100%)]">
             <NotificationToast notifications={notifications} onDismiss={dismissNotification} />
-            <div className="flex flex-col px-4 py-5 mx-auto max-w-350 sm:px-6 lg:px-8 lg:py-8">
+            <div className="mx-auto flex max-w-[1440px] flex-col px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
                 <Header />
 
-                <div className="mt-6 grid gap-6 xl:grid-cols-[260px_minmax(0,1fr)_360px] 2xl:grid-cols-[280px_minmax(0,1fr)_380px]">
-                    <aside className="xl:sticky xl:top-6 xl:max-h-[calc(100vh-3rem)] xl:self-start">
+                <div className="mt-5 grid gap-5 lg:mt-6 lg:gap-6 xl:grid-cols-[252px_minmax(0,1fr)_340px] 2xl:grid-cols-[272px_minmax(0,1fr)_370px]">
+                    <aside className="order-2 xl:order-1 xl:sticky xl:top-6 xl:max-h-[calc(100vh-3rem)] xl:self-start">
                         <HistorySidebar meetings={history} onOpen={openMeeting} />
                     </aside>
 
-                    <main className="min-w-0 space-y-6">
+                    <main className="order-1 min-w-0 space-y-5 xl:order-2 xl:space-y-6">
                         {notes !== null && transcript == null && (
                             <div className="px-4 py-3 text-sm font-medium border shadow-sm rounded-2xl border-emerald-200 bg-emerald-50 text-emerald-700">
                                 Meeting notes generated successfully.
@@ -128,7 +128,7 @@ function App() {
                         {loading && <LoadingSpinner />}
                     </main>
 
-                    <aside className="xl:sticky xl:top-6 xl:self-start">
+                    <aside className="order-3 xl:sticky xl:top-6 xl:self-start">
                         <RagAssistantPanel
                             isEnabled={id != null || history.length > 0}
                             onNotify={showNotification}

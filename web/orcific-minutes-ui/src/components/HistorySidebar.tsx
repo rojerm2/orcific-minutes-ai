@@ -9,7 +9,7 @@ export default function HistorySidebar({ meetings, onOpen }: Props) {
     return (
         <section
             aria-label="Meeting history sidebar"
-            className="flex max-h-[min(38rem,calc(100vh-3rem))] flex-col rounded-4xl border border-slate-200/80 bg-white p-5 shadow-[0_16px_45px_-30px_rgba(15,23,42,0.35)]"
+            className="surface flex max-h-[min(38rem,calc(100vh-3rem))] flex-col p-5"
         >
             <div className="flex shrink-0 items-start justify-between gap-3">
                 <div>
@@ -37,7 +37,7 @@ export default function HistorySidebar({ meetings, onOpen }: Props) {
                                 <button
                                     type="button"
                                     onClick={() => onOpen(meeting.id)}
-                                    className="group flex w-full items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-semibold text-slate-800 transition hover:border-indigo-200 hover:bg-indigo-50"
+                                    className="group flex w-full items-center justify-between gap-3 rounded-xl border border-slate-200/80 bg-white px-4 py-3 text-left text-sm font-semibold text-slate-800 transition duration-200 hover:-translate-y-0.5 hover:border-indigo-200 hover:bg-indigo-50 hover:shadow-sm"
                                 >
                                     <span className="truncate">{meeting.title}</span>
                                     <span className="text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-indigo-600">

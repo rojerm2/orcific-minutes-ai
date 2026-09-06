@@ -33,7 +33,7 @@ const sections = [
 
 export default function MeetingNotesCard({ notes, onDownloadPdf, onNotify }: Props) {
     return (
-        <article className="overflow-hidden rounded-4xl border border-slate-200 bg-white shadow-[0_16px_45px_-30px_rgba(15,23,42,0.35)]">
+        <article className="surface overflow-hidden">
             <div className="border-b border-slate-100 px-6 py-6 sm:px-8">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div>
@@ -49,19 +49,19 @@ export default function MeetingNotesCard({ notes, onDownloadPdf, onNotify }: Pro
                     </span>
                 </div>
                 <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                    <div className="rounded-xl bg-slate-50 px-4 py-3">
+                    <div className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
                         <p className="text-xs font-medium text-slate-500">Model</p>
                         <p className="mt-1 text-sm font-semibold text-slate-800">
                             {notes.metadata.model}
                         </p>
                     </div>
-                    <div className="rounded-xl bg-slate-50 px-4 py-3">
+                    <div className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
                         <p className="text-xs font-medium text-slate-500">Generation time</p>
                         <p className="mt-1 text-sm font-semibold text-slate-800">
                             {(notes.metadata.durationMs / 1000).toFixed(1)} seconds
                         </p>
                     </div>
-                    <div className="rounded-xl bg-slate-50 px-4 py-3">
+                    <div className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
                         <p className="text-xs font-medium text-slate-500">Created</p>
                         <p className="mt-1 text-sm font-semibold text-slate-800">
                             {new Date(notes.metadata.generatedAt).toLocaleString()}

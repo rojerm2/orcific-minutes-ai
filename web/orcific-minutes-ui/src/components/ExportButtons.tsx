@@ -38,17 +38,17 @@ export default function ExportButtons({
     };
 
     return (
-        <div className="flex flex-wrap gap-3 mt-3">
+        <div className="mt-3 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap">
             <button
                 type="button"
-                className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+                className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-slate-800"
                 onClick={handleCopy}
             >
                 Copy Notes
             </button>
             <button
                 type="button"
-                className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
+                className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:bg-slate-50"
                 onClick={handleMarkdown}
             >
                 Download Markdown
@@ -57,7 +57,7 @@ export default function ExportButtons({
             <button
                 type="button"
                 onClick={onDownloadPdf}
-                className="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700"
+                className="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-emerald-700"
             >
                 Download as PDF
             </button>
